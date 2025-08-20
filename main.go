@@ -7,12 +7,12 @@ import (
 
 )
 
-type Product struct{
-	ID	int
-	Title string
-	Description string
-	Price int
-	ImgUrl string
+type Product struct {
+	ID 			int     `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	ImgUrl 		string  `json:"imageUrl"`
 }
 
 var productList []Product
@@ -31,14 +31,42 @@ func getProducts(w http.ResponseWriter, r *http.Request){
 	encoder.Encode(productList)
 }
 
+func createProducts(w http.ResponseWriter, r*http.Request){
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Method != "POST"{
+		http.Error(w, "plz give post request",400)
+	}
+
+	var newProduct Product
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newProduct)
+	if err != nil{
+		http.Error(w, "plz give valid json", 400)
+		return
+	}
+
+	newProduct.ID = len(productList)+1
+
+	productList= append(productList,newProduct)
+
+	w.WriteHeader(201)
+	encoder := json.NewEncoder(w)
+	encoder.Encode(newProduct)
+}
+
 func main() {
 
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/products", getProducts)
+
+	mux.HandleFunc("/create-products", createProducts)
 
 	fmt.Println("Server running on port :8080")
 
-	err := http.ListenAndServe(":3000", mux)
+	err := http.ListenAndServe(":8080", mux)
 	if err != nil{
 		fmt.Println("error starting server",err)
 	}
