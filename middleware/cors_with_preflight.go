@@ -1,8 +1,9 @@
-package global_router
+package middleware
+
 
 import "net/http"
 
-func GlobalRouter(mux *http.ServeMux)http.Handler{
+func CorsWithPreflight(mux *http.ServeMux)http.Handler{
 	handleAlReq := func(w http.ResponseWriter, r *http.Request){
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")

@@ -2,23 +2,22 @@ package cmd
 
 import (
 	"ecommerce/database"
-	"ecommerce/global_router"
-	"ecommerce/handlers"
+	"ecommerce/middleware"
 	"fmt"
 	"net/http"
 )
 
 func Serve() {
 
+	manager := middleware.NewManager()
+	manager.Use(middleware.Logger)
 	mux := http.NewServeMux()
 
-	mux.Handle("/products", http.HandlerFunc(handlers.GetProducts))
+	// handler := http.HandlerFunc(handlers.Test)
+	initRoutes(mux, manager)
+	fmt.Println("Server running on port :8080") 
 
-	mux.Handle("/create-products", http.HandlerFunc(handlers.CreateProducts))
-
-	fmt.Println("Server running on port :8080")
-
-	globalRouter := global_router.GlobalRouter(mux)
+	globalRouter := middleware.CorsWithPreflight(mux)
 	err := http.ListenAndServe(":8080", globalRouter)
 	if err != nil {
 		fmt.Println("error starting server", err)
