@@ -1,0 +1,20 @@
+package handlers
+
+import (
+	"ecommerce/database"
+	"ecommerce/util"
+	"net/http"
+	"strconv"
+)
+
+func DeleteProduct(w http.ResponseWriter, r *http.Request){
+	productId := r.PathValue("id")
+	pId,err := strconv.Atoi(productId)
+	if err != nil{
+		http.Error(w, "please give me a valid product id",400)
+		return
+	}
+
+	database.Delete(pId)
+	util.SendData(w,"successfully updated product", 201)
+}
