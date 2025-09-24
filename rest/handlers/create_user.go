@@ -14,6 +14,7 @@ func CreateUser(w http.ResponseWriter, r*http.Request){
 	err := decoder.Decode(&newUser)
 	if err != nil{
 		http.Error(w,"invalid data",400)
+		return
 	}
 
 	createdUser := newUser.Store()
