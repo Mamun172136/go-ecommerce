@@ -1,4 +1,4 @@
-package handlers
+package product
 
 import (
 	"ecommerce/database"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func GetProducts(w http.ResponseWriter, r *http.Request) {
+func (h *Handler)GetProducts(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Fprint(w,"get product" )
 	// if r.Method != "GET"{
