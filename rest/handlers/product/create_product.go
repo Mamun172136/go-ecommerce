@@ -1,11 +1,19 @@
 package product
 
 import (
-	"ecommerce/database"
+	"ecommerce/repo"
 	"ecommerce/util"
 	"encoding/json"
 	"net/http"
 )
+
+type reqCreateProduct struct {
+	ID          int     `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	ImgUrl      string  `json:"imageUrl"`
+}
 
 func (h *Handler)CreateProducts(w http.ResponseWriter, r *http.Request) {
 	// handleCors(w)
@@ -15,7 +23,7 @@ func (h *Handler)CreateProducts(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "plz give post request",400)
 	// }
 
-	var newProduct database.Product
+	var newProduct reqCreateProduct
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&newProduct)
 	if err != nil {
@@ -23,7 +31,16 @@ func (h *Handler)CreateProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdProduct:= database.Store(newProduct)
+	createdProduct, err:= h.productRepo.Create(repo.Product{
+	Title: newProduct.Title,   
+	Description :newProduct.Description,
+	Price      :newProduct.Price,
+	ImgUrl  : newProduct.ImgUrl ,   
+	})
+	if err != nil{
+		http.Error(w,"Internal server error",http.StatusInternalServerError)
+	}
+	// createdProduct:= database.Store(newProduct)
 
 	// newProduct.ID = len(database.ProductList) + 1
 

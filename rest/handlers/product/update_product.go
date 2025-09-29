@@ -1,12 +1,20 @@
 package product
 
 import (
-	"ecommerce/database"
+	"ecommerce/repo"
 	"ecommerce/util"
 	"encoding/json"
 	"net/http"
 	"strconv"
 )
+
+type ReqCreateProduct struct {
+	ID          int     `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	ImgUrl      string  `json:"imageUrl"`
+}
 
 func (h*Handler)UpdateProduct(w http.ResponseWriter, r *http.Request){
 	productId := r.PathValue("productId")
@@ -16,7 +24,7 @@ func (h*Handler)UpdateProduct(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	var newProduct database.Product
+	var newProduct ReqCreateProduct
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&newProduct)
 	if err != nil{
@@ -24,7 +32,17 @@ func (h*Handler)UpdateProduct(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	
-	newProduct.ID = pId
-	database.Update(newProduct)
+	newProduct.ID = pId 
+	_, err= h.productRepo.Update(repo.Product{
+	ID: pId,
+	Title: newProduct.Title,   
+	Description :newProduct.Description,
+	Price      :newProduct.Price,
+	ImgUrl  : newProduct.ImgUrl ,   
+	})
+
+	if err != nil{
+		http.Error(w,"internal server error", http.StatusInternalServerError)
+	}
 	util.SendData(w,"successfully updated product", 201)
 }

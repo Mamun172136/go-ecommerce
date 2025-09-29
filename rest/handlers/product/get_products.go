@@ -1,7 +1,6 @@
 package product
 
 import (
-	"ecommerce/database"
 	"ecommerce/util"
 	"net/http"
 )
@@ -12,6 +11,10 @@ func (h *Handler)GetProducts(w http.ResponseWriter, r *http.Request) {
 	// if r.Method != "GET"{
 	// 	http.Error(w,"plz give me get request",400)
 	// }
-
-	util.SendData(w, database.List(), 200)
+	productList,err:= h.productRepo.List()
+	if err != nil{
+		http.Error(w, "please give me a valid product id",400)
+		return
+	}
+	util.SendData(w,productList, 200)
 }

@@ -2,7 +2,6 @@ package user
 
 import (
 	"ecommerce/config"
-	"ecommerce/database"
 	"ecommerce/util"
 	"encoding/json"
 	"net/http"
@@ -22,11 +21,15 @@ func (h*Handler) Login(w http.ResponseWriter, r*http.Request){
 		return
 	}
 
-	usr := database.Find(reqLogin.Password,reqLogin.Email)
-	if usr == nil{
-		http.Error(w, "invalid credential",400)
-		return
+	usr,err := h.userRepo.Find(reqLogin.Email, reqLogin.Password)
+	if err != nil{
+		util.SendError(w,http.StatusUnauthorized, "unauthorized")
 	}
+	// usr := database.Find(reqLogin.Password,reqLogin.Email)
+	// if usr == nil{
+	// 	http.Error(w, "invalid credential",400)
+	// 	return
+	// }
 
 		cnf := config.GetConfig()
 
@@ -43,5 +46,5 @@ func (h*Handler) Login(w http.ResponseWriter, r*http.Request){
 	}
 
 
-	util.SendData(w, accessToken, 201)
+	util.SendData(w, accessToken, http.StatusCreated)
 }
