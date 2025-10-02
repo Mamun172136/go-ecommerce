@@ -1,7 +1,6 @@
 package user
 
 import (
-	"ecommerce/config"
 	"ecommerce/util"
 	"encoding/json"
 	"net/http"
@@ -31,9 +30,10 @@ func (h*Handler) Login(w http.ResponseWriter, r*http.Request){
 	// 	return
 	// }
 
-		cnf := config.GetConfig()
 
-	accessToken, err := util.CreateJwt(cnf.JwtSecretKey, util.Payload{
+		// cnf := config.GetConfig()
+
+	accessToken, err := util.CreateJwt(h.cnf.JwtSecretKey, util.Payload{
 		Sub:       usr.ID, 
 		FirstName: usr.FirstName,
 		LastName:  usr.LastName,
