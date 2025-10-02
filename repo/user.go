@@ -1,14 +1,18 @@
 package repo
 
-import "github.com/jmoiron/sqlx"
+import (
+	"database/sql"
+
+	"github.com/jmoiron/sqlx"
+)
 
 type User struct {
-	ID          int    `json:"Id"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	IsShopOwner bool   `json:"is_shop_owner"`
+	ID          int    `json:"Id"db:"id"`
+	FirstName   string `json:"first_name"db:"first_name"`
+	LastName    string `json:"last_name"db:"last_name"`
+	Email       string `json:"email"db:"email"`
+	Password    string `json:"password"db:"password"`
+	IsShopOwner bool   `json:"is_shop_owner"db:"is_shop_owner"`
 }
 
 type UserRepo interface {
@@ -59,6 +63,23 @@ func (r userRepo) Find(email, password string) (*User, error) {
 	// 		return &u, nil
 	// 	}
 	// }
-	 return nil, nil
+	// return nil, nil
+
+	var user User
+	query := `
+		SELECT id, first_name, last_name, email, password, is_shop_owner, created_at, updated_at
+		FROM users
+		WHERE email = $1
+		LIMIT 1
+	`
+	err := r.db.Get(&user, query, email)
+	if err != nil {
+		if err == sql.ErrNoRows{
+			return nil,nil
+		}
+		// return nil, err if not found or another DB error
+		return nil, err
+	}
+	return &user, nil
 
 }
