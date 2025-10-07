@@ -13,5 +13,4 @@ func (h *Handler)RegisterRoutes(mux *http.ServeMux, manager *middleware.Manager)
 	mux.Handle("DELETE /products/{id}", manager.With(http.HandlerFunc(h.DeleteProduct)))
 	mux.Handle("POST /products", manager.With(http.HandlerFunc(h.CreateProducts)))
 
-
 }

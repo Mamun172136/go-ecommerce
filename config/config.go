@@ -15,6 +15,16 @@ type Config struct {
 	ServiceName   string
 	HttpPort      int
 	JwtSecretKey  string
+	DB	*DBConfig
+}
+
+type DBConfig struct{
+	Host	string
+	Port	int
+	Name 	string
+	User	string
+	Password string
+	EnableSSLMODE	bool
 }
 
 func loadConfig() {
@@ -53,11 +63,62 @@ func loadConfig() {
 		os.Exit(1)
 	}
 
+	host :=os.Getenv("DB_HOST")
+	if host == ""{
+		fmt.Println("host is required")
+		os.Exit(1)
+	}
+
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		fmt.Println("dbport Port is required!")
+		os.Exit(1)
+	}
+
+	dbPrt, err := strconv.ParseInt(dbPort, 10, 64)
+	if err != nil {
+		fmt.Println("dbPrt must be number") 
+		os.Exit(1)
+	}
+
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		fmt.Println("db name  is required!")
+		os.Exit(1)
+	}
+	dbPass := os.Getenv("DB_PASSWORD")
+	if dbPass == "" {
+		fmt.Println("dbPass Port is required!")
+		os.Exit(1)
+	}
+
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		fmt.Println("db user is required!")
+		os.Exit(1)
+	}
+	enableSslMode := os.Getenv("DB_ENABLE_SSL_MODE")
+	enblSslMode , err := strconv.ParseBool(enableSslMode)
+	if err != nil{
+		fmt.Println("")
+	}
+	 
+	dbconfig := &DBConfig{
+		Host: host,
+		Port: int(dbPrt),
+		Name: dbName,
+		User: dbUser,
+		Password: dbPass,
+		EnableSSLMODE:enblSslMode ,
+	}
+
 	configurations = &Config{
 		Version:      version,
 		ServiceName:  serviceName,
 		HttpPort:     int(port),
 		JwtSecretKey: jwtSecretKey,
+		DB: dbconfig,
+
 	}
 }
 

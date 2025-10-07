@@ -4,6 +4,6 @@ CREATE TABLE products (
     description TEXT,
     price DOUBLE PRECISION NOT NULL,
     image_url VARCHAR(255)
-     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,  -- Automatically sets timestamp when inserted
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,  -- Automatically sets timestamp when inserted
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP  -- Automatically sets timestamp when inserted
 );
